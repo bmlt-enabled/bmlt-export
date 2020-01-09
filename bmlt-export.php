@@ -81,6 +81,7 @@ if (!class_exists("bmltExport")) {
             if ($hook == 'settings_page_bmlt-export') {
                 wp_enqueue_style('bmlt-export-admin-ui-css', plugins_url('css/redmond/jquery-ui.css', __FILE__), false, '1.11.4', false);
                 wp_enqueue_style("chosen", plugin_dir_url(__FILE__) . "css/chosen.min.css", false, "1.2", 'all');
+                wp_enqueue_style('bmlt-export-css', plugin_dir_url(__FILE__) . 'css/bmlt_export.css', false, '1.01', 'all');
                 wp_enqueue_script("chosen", plugin_dir_url(__FILE__) . "js/chosen.jquery.min.js", array('jquery'), "1.2", true);
                 wp_enqueue_script('bmlt-export-admin', plugins_url('js/bmlt_export_admin.js', __FILE__), array('jquery'), filemtime(plugin_dir_path(__FILE__) . "js/bmlt_export_admin.js"), false);
                 wp_enqueue_script('common');

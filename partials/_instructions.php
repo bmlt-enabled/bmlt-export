@@ -1,6 +1,6 @@
 <h2>Instructions</h2>
 <p> Please open a ticket <a href="https://github.com/bmlt-enabled/bmlt-export/issues" target="_top">https://github.com/bmlt-enabled/bmlt-export/issues</a> with problems, questions or comments.</p>
-<div id="upcoming_meetings_accordion">
+<div id="bmlt_export_accordion">
     <h3 class="help-accordian"><strong>Basic</strong></h3>
     <div>
         <p>[upcoming_meetings root_server=&quot;https://www.domain.org/main_server&quot; services=&quot;12&quot; timezone="America/New_York]</p>
