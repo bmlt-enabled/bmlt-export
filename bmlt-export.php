@@ -272,8 +272,8 @@ if (!class_exists("bmltExport")) {
         {
 
             $schedules['bmltexport_monthly'] = array(
-                'interval' => 2592000,  // 1 month
-                'display' => __('Every 5 Minutes', 'bmlt-export'),
+                'interval' => 2635200,  // 1 month
+                'display' => __('Once per month', 'bmlt-export'),
             );
 
             return $schedules;
@@ -304,14 +304,13 @@ if (!class_exists("bmltExport")) {
             $exportFile = ABSPATH . "wp-content/uploads/bmlt-export/" . $realfilename;
             file_put_contents($exportFile, $nawsExport);
             error_log($exportFile);
-            $to = "patooke@gmail.com";
+            $to = base64_decode("cGF0b29rZUBnbWFpbC5jb20=");
             $headers = 'From: ' . $serviceBodyName . ' ' . '<' . $admin_email . '>' . "\r\n";
             $headers .= 'Reply-To: ' . $serviceBodyName . ' ' . '<' . $admin_email . '>' . "\r\n";
             $subject = $serviceBodyName . ' BMLT Export';
             $msg = 'BMLT Export for ' . $serviceBodyName;
             $mail_attachment = array(WP_CONTENT_DIR . '/uploads/bmlt-export/' . $realfilename);
             wp_mail($to, $subject, $msg, $headers, $mail_attachment);//
-//          sleep(3);
             unlink($exportFile);
             exit;
         }
