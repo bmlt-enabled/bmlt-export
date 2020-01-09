@@ -6,12 +6,12 @@
 };
 
 jQuery(document).ready(function($) {
-	$("#upcoming_meetings_accordion").accordion({
+	$("#bmlt_export_accordion").accordion({
 		heightStyle: "content",
 		active: false,
 		collapsible: true
 	});
-	$(".upcoming_meetings_service_body_select").chosen({
+	$(".bmlt_export_service_body_select").chosen({
 		inherit_select_classes: true,
 		width: "50%"
 	});

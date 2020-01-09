@@ -33,10 +33,10 @@ if (!class_exists("bmltExport")) {
             add_action("admin_notices", array(&$this, "isRootServerMissing"));
             add_action("admin_enqueue_scripts", array(&$this, "enqueueBackendFiles"), 500);
             add_action("admin_menu", array(&$this, "adminMenuLink"));
-            add_action( 'bmlt_send_export', array( $this, 'handle_cron_bmlt' ) );
-            add_filter( 'cron_schedules', array( $this, 'schedule_cron_bmlt' ) );
-            if ( ! wp_next_scheduled( 'bmlt_send_export' ) ) {
-                wp_schedule_event( time(), 'bmltexport_monthly', 'bmlt_send_export' );
+            add_action('bmlt_send_export', array( $this, 'handleCronBmlt' ));
+            add_filter('cron_schedules', array( $this, 'scheduleCronBmlt' ));
+            if (! wp_next_scheduled('bmlt_send_export')) {
+                wp_schedule_event(time(), 'bmltexport_monthly', 'bmlt_send_export');
             }
         }
 
@@ -268,11 +268,12 @@ if (!class_exists("bmltExport")) {
          * @param mixed $schedules Schedules.
          * @return mixed
          */
-        public function schedule_cron_bmlt( $schedules ) {
+        public function scheduleCronBmlt($schedules)
+        {
 
             $schedules['bmltexport_monthly'] = array(
-                'interval' => 300,
-                'display' => __( 'Every 5 Minutes', 'bmlt-export' ),
+                'interval' => 2592000,  // 1 month
+                'display' => __('Every 5 Minutes', 'bmlt-export'),
             );
 
             return $schedules;
@@ -283,27 +284,35 @@ if (!class_exists("bmltExport")) {
          *
          * Emails Export to NAWS.
          */
-        public function handle_cron_bmlt() {
-            $admin_email = get_option('admin_email');
-            $check = $this->bmltExport_FileListDirCheck();
-            if ($check == true) {
-                $cha = "true";
-            } else {
-                $cha = "Could not write to bmlt-export tmp directory";
-            }
-            $word = "Hello WordPress " . $admin_email . " " . $cha . " " . $this->options['service_body_dropdown'];
-            error_log($word);
-            
-//            $headers = 'From: My Name ' . '<' . $admin_email . '>' . "\r\n";
-//
-//            $subject = 'SERVICE_BODY_HERE NAWS Export';
-//
-//            $msg = 'Yay! Your book has <a href="http://yahoo.com">arrived</a>';
-//
-//            $mail_attachment = array(WP_CONTENT_DIR . '/wp-content/uploads/bmlt-export/ewadfcxz.csv');
-//
-//            wp_mail($to, $subject, $msg, $headers, $mail_attachment);
+        public function handleCronBmlt()
+        {
+            $admin_email = get_option('admin_email'); //
+            $check = $this->bmltExportFileDirCheck();
 
+            $serviceBodyData = explode(',', $this->options['service_body_dropdown']);
+            $serviceBodyName = stripslashes($serviceBodyData[0]);
+            $serviceBodyId = $serviceBodyData[1];
+
+            $nawsExport = file_get_contents($this->options['root_server'] . "/client_interface/csv/?switcher=GetNAWSDump&sb_id=" . $serviceBodyId);
+            $url = $this->options['root_server'] . "/client_interface/csv/?switcher=GetNAWSDump&sb_id=" . $serviceBodyId;
+            $content = get_headers($url, 1);
+            $content = array_change_key_case($content, CASE_LOWER);
+            $tmp_name = explode('=', $content['content-disposition']);
+            if ($tmp_name[1]) {
+                $realfilename = trim($tmp_name[1], '";\'');
+            }
+            $exportFile = ABSPATH . "wp-content/uploads/bmlt-export/" . $realfilename;
+            file_put_contents($exportFile, $nawsExport);
+            error_log($exportFile);
+            $to = "patooke@gmail.com";
+            $headers = 'From: ' . $serviceBodyName . ' ' . '<' . $admin_email . '>' . "\r\n";
+            $headers .= 'Reply-To: ' . $serviceBodyName . ' ' . '<' . $admin_email . '>' . "\r\n";
+            $subject = $serviceBodyName . ' BMLT Export';
+            $msg = 'BMLT Export for ' . $serviceBodyName;
+            $mail_attachment = array(WP_CONTENT_DIR . '/uploads/bmlt-export/' . $realfilename);
+            wp_mail($to, $subject, $msg, $headers, $mail_attachment);//
+//          sleep(3);
+            unlink($exportFile);
             exit;
         }
 
@@ -312,35 +321,32 @@ if (!class_exists("bmltExport")) {
          *
          * Create if Needed
          */
-        function bmltExport_FileListDirCheck() {
-            $bmltExportFileListDir = 'wp-content/uploads/bmlt-export';
+        public function bmltExportFileDirCheck()
+        {
+            $bmltExportFileDir = 'wp-content/uploads/bmlt-export';
             global $bmltExportFLDC;
 
-            $bmltExport_FileListDirCheck = get_transient('bmltExportFLDC-' . $bmltExportFLDC->bmltExportListID . '-FileListDirCheck');
+            $bmltExportFileDirCheck = get_transient('bmltExportFLDC-' . $bmltExportFLDC->bmltExportListID . '-FileDirCheck');
 
             // Check Transient First
-            if( $bmltExportFileListDir == $bmltExport_FileListDirCheck AND is_dir(ABSPATH . $bmltExportFileListDir) ) {
-
-                return TRUE; // OKAY, No Change
-
-            } elseif( strlen($bmltExportFileListDir) ) { // Transient Expired, Dir Changed or New Install
-                if( !is_writable( ABSPATH . $bmltExportFileListDir ) ) {
+            if ($bmltExportFileDir == $bmltExportFileDirCheck and is_dir(ABSPATH . $bmltExportFileDir)) {
+                return true; // OKAY, No Change
+            } elseif (strlen($bmltExportFileDir)) { // Transient Expired, Dir Changed or New Install
+                if (!is_writable(ABSPATH . $bmltExportFileDir)) {
                     // Environment Detection
                     if (strtoupper(substr(PHP_OS, 0, 3)) === 'WIN') {
-                        mkdir( ABSPATH . $bmltExportFileListDir ); // Windows
+                        mkdir(ABSPATH . $bmltExportFileDir); // Windows
                     } else {
-                        mkdir( ABSPATH . $bmltExportFileListDir , 0755); // Linux - Need to set permissions
+                        mkdir(ABSPATH . $bmltExportFileDir, 0755); // Linux - Need to set permissions
                     }
                 }
 
                 // Set Transient
-                set_transient('bmltExportFLDC-' . $bmltExportFLDC->bmltExportListID . '-FileListDirCheck', $bmltExportFileListDir, 86400); // 1 Expires in Day
+                set_transient('bmltExportFLDC-' . $bmltExportFLDC->bmltExportListID . '-FileDirCheck', $bmltExportFileDir, 86400); // 1 Expires in Day
 
-                return TRUE;
-
+                return true;
             } else {
-
-                return FALSE;
+                return false;
             }
         }
     }

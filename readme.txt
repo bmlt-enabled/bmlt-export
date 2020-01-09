@@ -1,4 +1,4 @@
-=== Upcoming Meetings BMLT ===
+=== BMLT Export===
 
 Contributors: pjaudiomv, bmlt-authors
 Plugin URI: https://wordpress.org/plugins/bmlt-export/
@@ -12,15 +12,11 @@ License URI: http://www.gnu.org/licenses/gpl-2.0.html
 
 == Description ==
 
-BMLT Export is a plugin that displays the next 'N' number of meetings from the current time on your page or in a widget using the upcoming_meetings shortcode.
-
--- Shortcode parameters can be combined
+BMLT Export is a plugin that will automatically send a BMLT Export to NAWS once a month..
 
 == Usage ==
 
-A minimum of root_server, services and timezone attributes are required, which would return the next 5 meetings in simple view with a 15minute grace period.
-
-Ex. [upcoming_meetings root_server=&quot;https://www.domain.org/main_server&quot; services=&quot;50&quot; timezone=&quot;America/New_York&quot;]
+A minimum of root_server, service body must be set.
 
 == MORE INFORMATION ==
 
