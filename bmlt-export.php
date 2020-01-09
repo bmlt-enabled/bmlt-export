@@ -206,9 +206,9 @@ if (!class_exists("bmltExport")) {
                     </div>
                     <div style="margin-top: 20px; padding: 0 15px;" class="postbox">
                         <p>
-                            <?php echo "<strong>Next Execution Time:</strong> " . date_i18n( 'm-d-Y h:i:s A',  wp_next_scheduled('bmlt_send_export')) . " (" . $this->time_since( time(), wp_next_scheduled('bmlt_send_export') ) . ")"; ?>
+                            <?php echo "<strong>Next Execution Time:</strong> " . date_i18n('m-d-Y h:i:s A', wp_next_scheduled('bmlt_send_export')) . " (" . $this->timeSince(time(), wp_next_scheduled('bmlt_send_export')) . ")"; ?>
                             &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-                            <?php echo "<strong>Current Server Time:</strong> " . date_i18n( 'm-d-y h:i:s A' ); ?>
+                            <?php echo "<strong>Current Server Time:</strong> " . date_i18n('m-d-y h:i:s A'); ?>
                         </p>
                     </div>
                     <input type="submit" value="SAVE CHANGES" name="bmltexportsave" class="button-primary" />
@@ -383,11 +383,12 @@ if (!class_exists("bmltExport")) {
          *
          * @param int $older_date Unix timestamp.
          * @param int $newer_date Unix timestamp.
-         * @return string The pretty time_since value
+         * @return string The pretty timeSince value
          * @link http://binarybonsai.com/code/timesince.txt
          */
-        public function time_since( $older_date, $newer_date ) {
-            return $this->interval( $newer_date - $older_date );
+        public function timeSince($older_date, $newer_date)
+        {
+            return $this->interval($newer_date - $older_date);
         }
 
         /**
@@ -401,7 +402,8 @@ if (!class_exists("bmltExport")) {
          * @param  int $since A period of time in seconds.
          * @return string An interval represented as a string.
          */
-        public function interval( $since ) {
+        public function interval($since)
+        {
             // Array of time period chunks.
             $chunks = array(
                 /* translators: 1: The number of years in an interval of time. */
@@ -420,7 +422,7 @@ if (!class_exists("bmltExport")) {
                 array( 1, '%s second', '%s seconds' ),
             );
 
-            if ( $since <= 0 ) {
+            if ($since <= 0) {
                 return 'now';
             }
 
@@ -430,37 +432,36 @@ if (!class_exists("bmltExport")) {
              * x days, xx hours
              * so there's only two bits of calculation below:
              */
-            $j = count( $chunks );
+            $j = count($chunks);
 
             // Step one: the first chunk.
-            for ( $i = 0; $i < $j; $i++ ) {
+            for ($i = 0; $i < $j; $i++) {
                 $seconds = $chunks[ $i ][0];
                 $name = $chunks[ $i ][1];
 
                 // Finding the biggest chunk (if the chunk fits, break).
-                $count = floor( $since / $seconds );
-                if ( $count ) {
+                $count = floor($since / $seconds);
+                if ($count) {
                     break;
                 }
             }
 
             // Set output var.
-            $output = sprintf( $name, $count, $count );
+            $output = sprintf($name, $count, $count);
 
             // Step two: the second chunk.
-            if ( $i + 1 < $j ) {
+            if ($i + 1 < $j) {
                 $seconds2 = $chunks[ $i + 1 ][0];
                 $name2 = $chunks[ $i + 1 ][1];
-                $count2 = floor( ( $since - ( $seconds * $count ) ) / $seconds2 );
-                if ( $count2 ) {
+                $count2 = floor(( $since - ( $seconds * $count ) ) / $seconds2);
+                if ($count2) {
                     // Add to output var.
-                    $output .= ' ' . sprintf( $name2, $count2, $count2 );
+                    $output .= ' ' . sprintf($name2, $count2, $count2);
                 }
             }
 
             return $output;
         }
-
     }
     //End Class BmltExport
 }
