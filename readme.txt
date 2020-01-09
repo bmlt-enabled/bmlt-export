@@ -12,7 +12,7 @@ License URI: http://www.gnu.org/licenses/gpl-2.0.html
 
 == Description ==
 
-BMLT Export is a plugin that will automatically send a BMLT Export to NAWS once a month..
+BMLT Export is a plugin that will automatically send a BMLT Export to NAWS once a month.
 
 == Usage ==
 

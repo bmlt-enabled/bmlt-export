@@ -3,7 +3,7 @@
 Plugin Name: BMLT Export
 Plugin URI: https://wordpress.org/plugins/bmlt-export/
 Author: pjaudiomv
-Description: This plugin returns all unique towns or counties for given service body on your site Simply add [list_locations] shortcode to your page and set shortcode attributes accordingly. Required attributes are root_server and services.
+Description: BMLT Export is a plugin that will automatically send a BMLT Export to NAWS once a month.
 Version: 1.0.0
 Install: Drop this directory into the "wp-content/plugins/" directory and activate it.
 */
