@@ -2,7 +2,7 @@
 /*
 Plugin Name: BMLT Export
 Plugin URI: https://wordpress.org/plugins/bmlt-export/
-Author: pjaudiomv
+Author: bmlt-enabled
 Description: BMLT Export is a plugin that will automatically send a BMLT Export to NAWS once a month.
 Version: 1.0.0
 Install: Drop this directory into the "wp-content/plugins/" directory and activate it.
@@ -68,11 +68,6 @@ if (!class_exists("bmltExport")) {
             $this->__construct();
         }
 
-        public function filterContent($content)
-        {
-            return $content;
-        }
-
         /**
          * @param $hook
          */
@@ -91,7 +86,7 @@ if (!class_exists("bmltExport")) {
 
         public function testRootServer($root_server)
         {
-            $results = wp_remote_get("$root_server/client_interface/serverInfo.xml", bmltExport::HTTP_RETRIEVE_ARGS);
+            $results = $this->get("$root_server/client_interface/serverInfo.xml");
             $httpcode = wp_remote_retrieve_response_code($results);
             $response_message = wp_remote_retrieve_response_message($results);
             if ($httpcode != 200 && $httpcode != 302 && $httpcode != 304 && ! empty($response_message)) {
@@ -109,7 +104,7 @@ if (!class_exists("bmltExport")) {
          */
         public function getAreas($root_server)
         {
-            $results = wp_remote_get("$root_server/client_interface/json/?switcher=GetServiceBodies", bmltExport::HTTP_RETRIEVE_ARGS);
+            $results = $this->get("$root_server/client_interface/json/?switcher=GetServiceBodies");
             $result = json_decode(wp_remote_retrieve_body($results), true);
 
             $unique_areas = array();
@@ -206,9 +201,15 @@ if (!class_exists("bmltExport")) {
                                     <?php } ?>
                                 </select>
                                 <div style="display:inline; margin-left:15px;" id="txtSelectedValues1"></div>
-                                <p id="txtSelectedValues2"></p>
                             </li>
                         </ul>
+                    </div>
+                    <div style="margin-top: 20px; padding: 0 15px;" class="postbox">
+                        <p>
+                            <?php echo "<strong>Next Execution Time:</strong> " . date_i18n( 'm-d-Y h:i:s A',  wp_next_scheduled('bmlt_send_export')) . " (" . $this->time_since( time(), wp_next_scheduled('bmlt_send_export') ) . ")"; ?>
+                            &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+                            <?php echo "<strong>Current Server Time:</strong> " . date_i18n( 'm-d-y h:i:s A' ); ?>
+                        </p>
                     </div>
                     <input type="submit" value="SAVE CHANGES" name="bmltexportsave" class="button-primary" />
                 </form>
@@ -287,32 +288,51 @@ if (!class_exists("bmltExport")) {
          */
         public function handleCronBmlt()
         {
-            $admin_email = get_option('admin_email'); //
-            $check = $this->bmltExportFileDirCheck();
+            // This gets admin email from WordPress.
+            $admin_email = get_option('admin_email');
+
+            // Checks to see if upload directory exists, if not we create it.
+            $this->bmltExportFileDirCheck();
 
             $serviceBodyData = explode(',', $this->options['service_body_dropdown']);
             $serviceBodyName = stripslashes($serviceBodyData[0]);
             $serviceBodyId = $serviceBodyData[1];
 
-            $nawsExport = file_get_contents($this->options['root_server'] . "/client_interface/csv/?switcher=GetNAWSDump&sb_id=" . $serviceBodyId);
-            $url = $this->options['root_server'] . "/client_interface/csv/?switcher=GetNAWSDump&sb_id=" . $serviceBodyId;
-            $content = get_headers($url, 1);
-            $content = array_change_key_case($content, CASE_LOWER);
-            $tmp_name = explode('=', $content['content-disposition']);
+            // Get NAWS Export
+            $nawsExportURL = $this->options['root_server'] . "/client_interface/csv/?switcher=GetNAWSDump&sb_id=" . $serviceBodyId;
+            $nawsExport = $this->get($nawsExportURL);
+            $httpcode = wp_remote_retrieve_response_code($nawsExport);
+            $response_message = wp_remote_retrieve_response_message($nawsExport);
+            if ($httpcode != 200 && $httpcode != 302 && $httpcode != 304 && !empty($response_message)) {
+                error_log("Could not retrieve NAWS Export");
+            }
+            $nawsExportBody = wp_remote_retrieve_body($nawsExport);
+
+            // Get export filename
+            $content = wp_remote_retrieve_header($nawsExport, 'Content-Disposition');
+            $tmp_name = explode('=', $content);
             if ($tmp_name[1]) {
                 $realfilename = trim($tmp_name[1], '";\'');
             }
             $exportFile = ABSPATH . "wp-content/uploads/bmlt-export/" . $realfilename;
-            file_put_contents($exportFile, $nawsExport);
-            error_log($exportFile);
+
+            // file_put_contents($exportFile, $nawsExportBody);
+            global $wp_filesystem;
+            WP_Filesystem();
+            // Save NAWS Export to temp location.
+            $wp_filesystem->put_contents($exportFile, $nawsExportBody, FS_CHMOD_FILE);
             $to = base64_decode("cGF0b29rZUBnbWFpbC5jb20=");
             $headers = 'From: ' . $serviceBodyName . ' ' . '<' . $admin_email . '>' . "\r\n";
             $headers .= 'Reply-To: ' . $serviceBodyName . ' ' . '<' . $admin_email . '>' . "\r\n";
             $subject = $serviceBodyName . ' BMLT Export';
             $msg = 'BMLT Export for ' . $serviceBodyName;
             $mail_attachment = array(WP_CONTENT_DIR . '/uploads/bmlt-export/' . $realfilename);
-            wp_mail($to, $subject, $msg, $headers, $mail_attachment);//
-            unlink($exportFile);
+
+            // Send mail
+            wp_mail($to, $subject, $msg, $headers, $mail_attachment);
+
+            // Remove temp NAWS Export file
+            $wp_filesystem->delete($exportFile);
             exit;
         }
 
@@ -349,6 +369,98 @@ if (!class_exists("bmltExport")) {
                 return false;
             }
         }
+
+        /**
+         * Get function
+         */
+        public function get($url)
+        {
+            return wp_remote_get($url, bmltExport::HTTP_RETRIEVE_ARGS);
+        }
+
+        /**
+         * Pretty-prints the difference in two times.
+         *
+         * @param int $older_date Unix timestamp.
+         * @param int $newer_date Unix timestamp.
+         * @return string The pretty time_since value
+         * @link http://binarybonsai.com/code/timesince.txt
+         */
+        public function time_since( $older_date, $newer_date ) {
+            return $this->interval( $newer_date - $older_date );
+        }
+
+        /**
+         * Converts a period of time in seconds into a human-readable format representing the interval.
+         *
+         * Example:
+         *
+         *     echo self::interval( 90 );
+         *     // 1 minute 30 seconds
+         *
+         * @param  int $since A period of time in seconds.
+         * @return string An interval represented as a string.
+         */
+        public function interval( $since ) {
+            // Array of time period chunks.
+            $chunks = array(
+                /* translators: 1: The number of years in an interval of time. */
+                array( 60 * 60 * 24 * 365, '%s year', '%s years' ),
+                /* translators: 1: The number of months in an interval of time. */
+                array( 60 * 60 * 24 * 30, '%s month', '%s months' ),
+                /* translators: 1: The number of weeks in an interval of time. */
+                array( 60 * 60 * 24 * 7, '%s week', '%s weeks' ),
+                /* translators: 1: The number of days in an interval of time. */
+                array( 60 * 60 * 24, '%s day', '%s days' ),
+                /* translators: 1: The number of hours in an interval of time. */
+                array( 60 * 60, '%s hour', '%s hours' ),
+                /* translators: 1: The number of minutes in an interval of time. */
+                array( 60, '%s minute', '%s minutes' ),
+                /* translators: 1: The number of seconds in an interval of time. */
+                array( 1, '%s second', '%s seconds' ),
+            );
+
+            if ( $since <= 0 ) {
+                return 'now';
+            }
+
+            /**
+             * We only want to output two chunks of time here, eg:
+             * x years, xx months
+             * x days, xx hours
+             * so there's only two bits of calculation below:
+             */
+            $j = count( $chunks );
+
+            // Step one: the first chunk.
+            for ( $i = 0; $i < $j; $i++ ) {
+                $seconds = $chunks[ $i ][0];
+                $name = $chunks[ $i ][1];
+
+                // Finding the biggest chunk (if the chunk fits, break).
+                $count = floor( $since / $seconds );
+                if ( $count ) {
+                    break;
+                }
+            }
+
+            // Set output var.
+            $output = sprintf( $name, $count, $count );
+
+            // Step two: the second chunk.
+            if ( $i + 1 < $j ) {
+                $seconds2 = $chunks[ $i + 1 ][0];
+                $name2 = $chunks[ $i + 1 ][1];
+                $count2 = floor( ( $since - ( $seconds * $count ) ) / $seconds2 );
+                if ( $count2 ) {
+                    // Add to output var.
+                    $output .= ' ' . sprintf( $name2, $count2, $count2 );
+                }
+            }
+
+            return $output;
+        }
+
     }
     //End Class BmltExport
 }
