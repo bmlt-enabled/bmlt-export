@@ -148,15 +148,15 @@ class BmltExportLoader
     {
 
         foreach ($this->filters as $hook) {
-            addFilter($hook['hook'], array( $hook['component'], $hook['callback'] ), $hook['priority'], $hook['accepted_args']);
+            add_filter($hook['hook'], array( $hook['component'], $hook['callback'] ), $hook['priority'], $hook['accepted_args']);
         }
 
         foreach ($this->actions as $hook) {
-            addAction($hook['hook'], array( $hook['component'], $hook['callback'] ), $hook['priority'], $hook['accepted_args']);
+            add_action($hook['hook'], array( $hook['component'], $hook['callback'] ), $hook['priority'], $hook['accepted_args']);
         }
 
         foreach ($this->shortcodes as $hook) {
-            addShortcode($hook['hook'], array( $hook['component'], $hook['callback'] ));
+            add_shortcode($hook['hook'], array( $hook['component'], $hook['callback'] ));
         }
     }
 }
