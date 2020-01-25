@@ -1,26 +1,16 @@
-=== BMLT Export===
-
-Contributors: pjaudiomv, bmlt-authors
-Plugin URI: https://wordpress.org/plugins/bmlt-export/
+=== BMLT Export ===
+Contributors: pjaudiomv, bmltenabled
 Tags: bmlt, basic meeting list toolbox, export, naws export, narcotics anonymous, na
-Requires at least: 4.0
-Requires PHP: 5.6
 Tested up to: 5.3.2
 Stable tag: 1.0.0
 License: GPLv2 or later
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
 
+Keeps your meeting list information up to date with NAWS.
+
 == Description ==
 
 BMLT Export is a plugin that will automatically send a BMLT Export to NAWS once a month.
-
-== Usage ==
-
-A minimum of root_server, service body must be set.
-
-== MORE INFORMATION ==
-
-<a href="https://github.com/bmlt-enabled/bmlt-export" target="_blank">https://github.com/bmlt-enabled/bmlt-export</a>
 
 
 == Installation ==
@@ -31,6 +21,16 @@ This section describes how to install the plugin and get it working.
 2. Activate the plugin through the Plugins menu in WordPress
 3. At a minimum assign root_server, and make sure email settings are setup in wordpress.
 
+== Frequently Asked Questions ==
+
+= A question that someone might have =
+
+An answer to that question.
+
+= What about foo bar? =
+
+Answer to foo bar dilemma.
+
 == Screenshots ==
 
 1. screenshot-1.png
@@ -38,5 +38,4 @@ This section describes how to install the plugin and get it working.
 == Changelog ==
 
 = 1.0.0 =
-
-* Initial WordPress submission.
+* Initial release.
