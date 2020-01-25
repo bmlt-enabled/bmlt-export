@@ -8,8 +8,8 @@
  * @link       http://example.com
  * @since      1.0.0
  *
- * @package    Bmlt_Export
- * @subpackage Bmlt_Export/admin/partials
+ * @package    BmltExport
+ * @subpackage BmltExport/admin/partials
  */
 ?>
 
@@ -26,7 +26,7 @@ if ($_POST['bmlt_export_save']) {
     $this->options['root_server']                = esc_url_raw($_POST['root_server']);
     $this->options['service_body_dropdown']      = sanitize_text_field($_POST['service_body_dropdown']);
 
-    $this->save_admin_options();
+    $this->saveAdminOptions();
     echo '<div class="updated"><p>Success! Your changes were successfully saved!</p></div>';
 }
 ?>
@@ -34,7 +34,7 @@ if ($_POST['bmlt_export_save']) {
     <h2>BMLT Export</h2>
     <form style="display:inline!important;" method="POST" id="bmlt_export_options" name="bmlt_export_options">
         <?php wp_nonce_field('bmltexportupdate-options'); ?>
-        <?php $this_connected = $this->test_root_server($this->options['root_server']); ?>
+        <?php $this_connected = $this->testRootServer($this->options['root_server']); ?>
         <?php $connect = "<p><div style='color: #f00;font-size: 16px;vertical-align: text-top;' class='dashicons dashicons-no'></div><span style='color: #f00;'>Connection to Root Server Failed.  Check spelling or try again.  If you are certain spelling is correct, Root Server could be down.</span></p>"; ?>
         <?php if ($this_connected != false) { ?>
             <?php $connect = "<span style='color: #00AD00;'><div style='font-size: 16px;vertical-align: text-top;' class='dashicons dashicons-smiley'></div>Version ".$this_connected."</span>"?>
@@ -48,10 +48,10 @@ if ($_POST['bmlt_export_save']) {
                     <label for="root_server">Default Root Server: </label>
                     <select style="display:inline;" id="root_server" name="root_server" class="bmlt_export_root_servers_select">
                         <?php
-                        $rootServerList = $this->get_root_servers();
+                        $rootServerList = $this->getRootServers();
                         foreach ($rootServerList as $rootServer) { ?>
-                            <?php $rootServerURL = rtrim($rootServer['rootURL'],"/"); ?>
-                            <?php if ($rootServerURL == rtrim($this->options['root_server'],"/")) { ?>
+                            <?php $rootServerURL = rtrim($rootServer['rootURL'], "/"); ?>
+                            <?php if ($rootServerURL == rtrim($this->options['root_server'], "/")) { ?>
                                 <option selected="selected" value="<?php echo $rootServerURL; ?>"><?php echo $rootServer['name'] . " (" . $rootServerURL . ")"; ?></option>
                             <?php } else { ?>
                                 <option value="<?php echo $rootServerURL; ?>"><?php echo $rootServer['name'] . " (" . $rootServerURL . ")"; ?></option>
@@ -69,7 +69,7 @@ if ($_POST['bmlt_export_save']) {
                     <label for="service_body_dropdown">Default Service Body: </label>
                     <select style="display:inline;" onchange="getBmltExportValueSelected()" id="service_body_dropdown" name="service_body_dropdown" class="bmlt_export_service_body_select">
                         <?php if ($this_connected) { ?>
-                            <?php $unique_areas = $this->get_areas($this->options['root_server']); ?>
+                            <?php $unique_areas = $this->getAreas($this->options['root_server']); ?>
                             <?php asort($unique_areas); ?>
                             <?php foreach ($unique_areas as $key => $unique_area) { ?>
                                 <?php $area_data          = explode(',', $unique_area); ?>
@@ -95,7 +95,7 @@ if ($_POST['bmlt_export_save']) {
         </div>
         <div style="margin-top: 20px; padding: 0 15px;" class="postbox">
             <p>
-                <?php echo "<strong>Next Execution Time:</strong> " . date_i18n('m-d-Y h:i:s A', wp_next_scheduled('bmlt_send_export')) . " (" . $this->time_since(time(), wp_next_scheduled('bmlt_send_export')) . ")"; ?>
+                <?php echo "<strong>Next Execution Time:</strong> " . date_i18n('m-d-Y h:i:s A', wp_next_scheduled('bmlt_send_export')) . " (" . $this->timeSince(time(), wp_next_scheduled('bmlt_send_export')) . ")"; ?>
                 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
                 <?php echo "<strong>Current Server Time:</strong> " . date_i18n('m-d-y h:i:s A'); ?>
             </p>

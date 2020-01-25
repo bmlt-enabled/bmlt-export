@@ -8,8 +8,8 @@
  * @link       http://example.com
  * @since      1.0.0
  *
- * @package    Bmlt_Export
- * @subpackage Bmlt_Export/public/partials
+ * @package    BmltExport
+ * @subpackage BmltExport/public/partials
  */
 ?>
 

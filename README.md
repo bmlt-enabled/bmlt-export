@@ -25,7 +25,7 @@ The Boilerplate can be installed directly into your plugins folder "as-is". You 
 * rename files from `bmlt-export` to `example-me`
 * change `bmlt_export` to `example_me`
 * change `bmlt-export` to `example-me`
-* change `Bmlt_Export` to `Example_Me`
+* change `BmltExport` to `Example_Me`
 * change `BMLT_EXPORT_` to `EXAMPLE_ME_`
 
 It's safe to activate the plugin at this point. Because the Boilerplate has no real functionality there will be no menu items, meta boxes, or custom post types added until you write the code.
@@ -74,7 +74,7 @@ Note that if you include your own classes, or third-party libraries, there are t
 * `bmlt-export/admin` is for all admin-specific functionality
 * `bmlt-export/public` is for all public-facing functionality
 
-Note that previous versions of the Boilerplate did not include `Bmlt_Export_Loader` but this class is used to register all filters and actions with WordPress.
+Note that previous versions of the Boilerplate did not include `BmltExportLoader` but this class is used to register all filters and actions with WordPress.
 
 The example code provided shows how to register your hooks with the Loader class.
 

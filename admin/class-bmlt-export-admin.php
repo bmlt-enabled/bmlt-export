@@ -6,8 +6,8 @@
  * @link       http://example.com
  * @since      1.0.0
  *
- * @package    Bmlt_Export
- * @subpackage Bmlt_Export/admin
+ * @package    BmltExport
+ * @subpackage BmltExport/admin
  */
 
 /**
@@ -16,29 +16,32 @@
  * Defines the plugin name, version, and two examples hooks for how to
  * enqueue the admin-specific stylesheet and JavaScript.
  *
- * @package    Bmlt_Export
- * @subpackage Bmlt_Export/admin
+ * @package    BmltExport
+ * @subpackage BmltExport/admin
  * @author     BMLT Enabled <help@bmlt.app>
  */
-class Bmlt_Export_Admin {
+// phpcs:disable PSR1.Classes.ClassDeclaration.MissingNamespace
+class BmltExportAdmin
+{
+// phpcs:enable PSR1.Classes.ClassDeclaration.MissingNamespace
 
-	/**
-	 * The ID of this plugin.
-	 *
-	 * @since    1.0.0
-	 * @access   private
-	 * @var      string    $bmlt_export    The ID of this plugin.
-	 */
-	private $bmlt_export;
+    /**
+     * The ID of this plugin.
+     *
+     * @since    1.0.0
+     * @access   private
+     * @var      string    $bmlt_export    The ID of this plugin.
+     */
+    private $bmlt_export;
 
-	/**
-	 * The version of this plugin.
-	 *
-	 * @since    1.0.0
-	 * @access   private
-	 * @var      string    $version    The current version of this plugin.
-	 */
-	private $version;
+    /**
+     * The version of this plugin.
+     *
+     * @since    1.0.0
+     * @access   private
+     * @var      string    $version    The current version of this plugin.
+     */
+    private $version;
 
     private $plugin_screen_hook_suffix;
 
@@ -52,71 +55,72 @@ class Bmlt_Export_Admin {
     );
 
     /**
-	 * Initialize the class and set its properties.
-	 *
-	 * @since    1.0.0
-	 * @param      string    $bmlt_export       The name of this plugin.
-	 * @param      string    $version    The version of this plugin.
-	 */
-	public function __construct( $bmlt_export, $version ) {
-        $this->get_options();
-		$this->bmlt_export = $bmlt_export;
-		$this->version = $version;
+     * Initialize the class and set its properties.
+     *
+     * @since    1.0.0
+     * @param      string    $bmlt_export       The name of this plugin.
+     * @param      string    $version    The version of this plugin.
+     */
+    public function __construct($bmlt_export, $version)
+    {
+        $this->getOptions();
+        $this->bmlt_export = $bmlt_export;
+        $this->version = $version;
         if (! wp_next_scheduled('bmlt_send_export')) {
             wp_schedule_event(time(), 'bmlt_export_monthly', 'bmlt_send_export');
         }
+    }
 
-	}
+    /**
+     * Register the stylesheets for the admin area.
+     *
+     * @since    1.0.0
+     */
+    public function enqueueStyles()
+    {
 
-	/**
-	 * Register the stylesheets for the admin area.
-	 *
-	 * @since    1.0.0
-	 */
-	public function enqueue_styles() {
+        /**
+         * This function is provided for demonstration purposes only.
+         *
+         * An instance of this class should be passed to the run() function
+         * defined in BmltExportLoader as all of the hooks are defined
+         * in that particular class.
+         *
+         * The BmltExportLoader will then create the relationship
+         * between the defined hooks and the functions defined in this
+         * class.
+         */
 
-		/**
-		 * This function is provided for demonstration purposes only.
-		 *
-		 * An instance of this class should be passed to the run() function
-		 * defined in Bmlt_Export_Loader as all of the hooks are defined
-		 * in that particular class.
-		 *
-		 * The Bmlt_Export_Loader will then create the relationship
-		 * between the defined hooks and the functions defined in this
-		 * class.
-		 */
-
-        wp_enqueue_style( $this->bmlt_export, plugin_dir_url( __FILE__ ) . 'css/bmlt-export-admin.css', array(), $this->version, 'all' );
+        wp_enqueue_style($this->bmlt_export, plugin_dir_url(__FILE__) . 'css/bmlt-export-admin.css', array(), $this->version, 'all');
         wp_enqueue_style('bmlt-export-admin-ui-chosen-css', plugins_url('css/redmond/jquery-ui.css', __FILE__), false, $this->version, false);
         wp_enqueue_style("chosen", plugin_dir_url(__FILE__) . "css/chosen.min.css", false, $this->version, 'all');
+    }
 
-	}
+    /**
+     * Register the JavaScript for the admin area.
+     *
+     * @since    1.0.0
+     */
+    public function enqueueScripts()
+    {
 
-	/**
-	 * Register the JavaScript for the admin area.
-	 *
-	 * @since    1.0.0
-	 */
-	public function enqueue_scripts() {
+        /**
+         * This function is provided for demonstration purposes only.
+         *
+         * An instance of this class should be passed to the run() function
+         * defined in BmltExportLoader as all of the hooks are defined
+         * in that particular class.
+         *
+         * The BmltExportLoader will then create the relationship
+         * between the defined hooks and the functions defined in this
+         * class.
+         */
 
-		/**
-		 * This function is provided for demonstration purposes only.
-		 *
-		 * An instance of this class should be passed to the run() function
-		 * defined in Bmlt_Export_Loader as all of the hooks are defined
-		 * in that particular class.
-		 *
-		 * The Bmlt_Export_Loader will then create the relationship
-		 * between the defined hooks and the functions defined in this
-		 * class.
-		 */
-
-        wp_enqueue_script( $this->bmlt_export, plugin_dir_url( __FILE__ ) . 'js/bmlt-export-admin.js', array( 'jquery' ), $this->version, false );
+        wp_enqueue_script($this->bmlt_export, plugin_dir_url(__FILE__) . 'js/bmlt-export-admin.js', array( 'jquery' ), $this->version, false);
         wp_enqueue_script("chosen", plugin_dir_url(__FILE__) . "js/chosen.jquery.min.js", array('jquery'), $this->version, true);
         wp_enqueue_script('common');
         wp_enqueue_script('jquery-ui-accordion');
-	}
+    }
 
     /**
      * Schedule cron bmlt
@@ -125,7 +129,8 @@ class Bmlt_Export_Admin {
      * @param mixed $schedules Schedules.
      * @return mixed
      */
-    public function schedule_cron_bmlt($schedules) {
+    public function scheduleCronBmlt($schedules)
+    {
 
         $schedules['bmlt_export_monthly'] = array(
             'interval' => 2635200,  // 1 month
@@ -140,11 +145,12 @@ class Bmlt_Export_Admin {
      *
      * Emails Export to NAWS.
      */
-    public function handle_cron_bmlt() {
+    public function handleCronBmlt()
+    {
         error_log("We have handled the cron" . time());
 
         // Checks to see if upload directory exists, if not we create it.
-        $this->file_dir_check();
+        $this->fileDirCheck();
 
         $serviceBodyData = explode(',', $this->options['service_body_dropdown']);
         $serviceBodyId = $serviceBodyData[1];
@@ -172,17 +178,17 @@ class Bmlt_Export_Admin {
         $mail_attachment = array(WP_CONTENT_DIR . '/uploads/bmlt-export/' . $realfilename);
 
         // Send mail
-        $this->bmlt_mail($mail_attachment);
+        $this->bmltMail($mail_attachment);
 
         // Remove temp NAWS Export file
         $wp_filesystem->delete($exportFile);
         remove_filter('wp_mail_content_type', 'bmlt_email_content_type_html');
         error_log("Happy");
         exit;
-
     }
 
-    public function admin_options_page() {
+    public function adminOptionsPage()
+    {
         include_once 'partials/bmlt-export-admin-display.php';
     }
 
@@ -190,7 +196,7 @@ class Bmlt_Export_Admin {
      * Retrieves the plugin options from the database.
      * @return void
      */
-    public function get_options()
+    public function getOptions()
     {
         // Don't forget to set up the default options
         if (!$theOptions = get_option($this->optionsName)) {
@@ -206,7 +212,7 @@ class Bmlt_Export_Admin {
     /**
      * Saves the admin options to the database.
      */
-    public function save_admin_options()
+    public function saveAdminOptions()
     {
         $this->options['root_server'] = untrailingslashit(preg_replace('/^(.*)\/(.*php)$/', '$1', $this->options['root_server']));
         update_option($this->optionsName, $this->options);
@@ -216,8 +222,9 @@ class Bmlt_Export_Admin {
     /**
      * Get function
      */
-    public function get($url) {
-        return wp_remote_get($url, Bmlt_Export_Admin::HTTP_RETRIEVE_ARGS);
+    public function get($url)
+    {
+        return wp_remote_get($url, BmltExportAdmin::HTTP_RETRIEVE_ARGS);
     }
 
     /**
@@ -225,10 +232,11 @@ class Bmlt_Export_Admin {
      *
      * @param int $older_date Unix timestamp.
      * @param int $newer_date Unix timestamp.
-     * @return string The pretty time_since value
+     * @return string The pretty timeSince value
      * @link http://binarybonsai.com/code/timesince.txt
      */
-    public function time_since($older_date, $newer_date) {
+    public function timeSince($older_date, $newer_date)
+    {
         return $this->interval($newer_date - $older_date);
     }
 
@@ -243,7 +251,8 @@ class Bmlt_Export_Admin {
      * @param  int $since A period of time in seconds.
      * @return string An interval represented as a string.
      */
-    public function interval($since) {
+    public function interval($since)
+    {
         // Array of time period chunks.
         $chunks = array(
             /* translators: 1: The number of years in an interval of time. */
@@ -303,7 +312,8 @@ class Bmlt_Export_Admin {
         return $output;
     }
 
-    public function is_root_server_missing() {
+    public function isRootServerMissing()
+    {
         $root_server = $this->options['root_server'];
         if ($root_server == '') {
             echo '<div id="message" class="error"><p>Missing BMLT Root Server in settings for BMLT Export.</p>';
@@ -311,13 +321,14 @@ class Bmlt_Export_Admin {
             echo "<p><a href='$url'>BMLT Export Settings</a></p>";
             echo '</div>';
         }
-        add_action("admin_notices", array(
+        addAction("admin_notices", array(
             &$this,
             "clear_admin_message"
         ));
     }
 
-    public function test_root_server($root_server) {
+    public function testRootServer($root_server)
+    {
         $results = $this->get("$root_server/client_interface/serverInfo.xml");
         $httpcode = wp_remote_retrieve_response_code($results);
         $response_message = wp_remote_retrieve_response_message($results);
@@ -336,7 +347,8 @@ class Bmlt_Export_Admin {
      * @param $root_server
      * @return array
      */
-    public function get_areas($root_server) {
+    public function getAreas($root_server)
+    {
         $results = $this->get("$root_server/client_interface/json/?switcher=GetServiceBodies");
         $result = json_decode(wp_remote_retrieve_body($results), true);
 
@@ -356,7 +368,8 @@ class Bmlt_Export_Admin {
     /**
      * @desc Get Root Server List
      */
-    public function get_root_servers() {
+    public function getRootServers()
+    {
         $results = $this->get("https://raw.githubusercontent.com/bmlt-enabled/tomato/master/rootServerList.json");
         $result = json_decode(wp_remote_retrieve_body($results), true);
         array_push($result, [
@@ -370,20 +383,22 @@ class Bmlt_Export_Admin {
         return $result;
     }
 
-    public function admin_menu_link() {
+    public function adminMenuLink()
+    {
         // If you change this from add_options_page, MAKE SURE you change the filter_plugin_actions function (below) to
         // reflect the page file name (i.e. - options-general.php) of the page your plugin is under!
         add_options_page('BMLT Export', 'BMLT Export', 'activate_plugins', basename(__FILE__), array(
             &$this,
-            'admin_options_page'
+            'adminOptionsPage'
         ));
-        add_filter('plugin_action_links_' . plugin_basename(__FILE__), array(
+        addFilter('plugin_action_links_' . plugin_basename(__FILE__), array(
             &$this,
             'filter_plugin_actions'
         ), 10, 2);
     }
 
-    function bmlt_mail($attachment) {
+    public function bmltMail($attachment)
+    {
         $admin_email = get_option('admin_email');
         $serviceBodyData = explode(',', $this->options['service_body_dropdown']);
         $serviceBodyName = stripslashes($serviceBodyData[0]);
@@ -430,10 +445,11 @@ class Bmlt_Export_Admin {
      *
      * Create if Needed
      */
-    public function file_dir_check() {
+    public function fileDirCheck()
+    {
         $bmltExportFileDir = 'wp-content/uploads/bmlt-export';
 
-        $bmltExportFileDirCheck = get_transient('bmlt_export_file_dir_check');
+        $bmltExportFileDirCheck = get_transient('bmlt_export_fileDirCheck');
 
         // Check Transient First
         if ($bmltExportFileDir == $bmltExportFileDirCheck and is_dir(ABSPATH . $bmltExportFileDir)) {
@@ -449,12 +465,11 @@ class Bmlt_Export_Admin {
             }
 
             // Set Transient
-            set_transient('bmlt_export_file_dir_check', $bmltExportFileDir, 86400); // 1 Expires in Day
+            set_transient('bmlt_export_fileDirCheck', $bmltExportFileDir, 86400); // 1 Expires in Day
 
             return true;
         } else {
             return false;
         }
     }
-
 }

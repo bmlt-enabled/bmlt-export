@@ -9,8 +9,8 @@
  * @link       http://example.com
  * @since      1.0.0
  *
- * @package    Bmlt_Export
- * @subpackage Bmlt_Export/includes
+ * @package    BmltExport
+ * @subpackage BmltExport/includes
  */
 
 /**
@@ -23,145 +23,148 @@
  * version of the plugin.
  *
  * @since      1.0.0
- * @package    Bmlt_Export
- * @subpackage Bmlt_Export/includes
+ * @package    BmltExport
+ * @subpackage BmltExport/includes
  * @author     BMLT Enabled <help@bmlt.app>
  */
-class Bmlt_Export {
+// phpcs:disable PSR1.Classes.ClassDeclaration.MissingNamespace
+class BmltExport
+{
+// phpcs:enable PSR1.Classes.ClassDeclaration.MissingNamespace
 
-	/**
-	 * The loader that's responsible for maintaining and registering all hooks that power
-	 * the plugin.
-	 *
-	 * @since    1.0.0
-	 * @access   protected
-	 * @var      Bmlt_Export_Loader    $loader    Maintains and registers all hooks for the plugin.
-	 */
-	protected $loader;
+    /**
+     * The loader that's responsible for maintaining and registering all hooks that power
+     * the plugin.
+     *
+     * @since    1.0.0
+     * @access   protected
+     * @var      BmltExportLoader    $loader    Maintains and registers all hooks for the plugin.
+     */
+    protected $loader;
 
-	/**
-	 * The unique identifier of this plugin.
-	 *
-	 * @since    1.0.0
-	 * @access   protected
-	 * @var      string    $bmlt_export    The string used to uniquely identify this plugin.
-	 */
-	protected $bmlt_export;
+    /**
+     * The unique identifier of this plugin.
+     *
+     * @since    1.0.0
+     * @access   protected
+     * @var      string    $bmlt_export    The string used to uniquely identify this plugin.
+     */
+    protected $bmlt_export;
 
-	/**
-	 * The current version of the plugin.
-	 *
-	 * @since    1.0.0
-	 * @access   protected
-	 * @var      string    $version    The current version of the plugin.
-	 */
-	protected $version;
+    /**
+     * The current version of the plugin.
+     *
+     * @since    1.0.0
+     * @access   protected
+     * @var      string    $version    The current version of the plugin.
+     */
+    protected $version;
 
-	/**
-	 * Define the core functionality of the plugin.
-	 *
-	 * Set the plugin name and the plugin version that can be used throughout the plugin.
-	 * Load the dependencies, define the locale, and set the hooks for the admin area and
-	 * the public-facing side of the site.
-	 *
-	 * @since    1.0.0
-	 */
-	public function __construct() {
-		if ( defined( 'BMLT_EXPORT_VERSION' ) ) {
-			$this->version = BMLT_EXPORT_VERSION;
-		} else {
-			$this->version = '1.0.0';
-		}
-		$this->bmlt_export = 'bmlt-export';
+    /**
+     * Define the core functionality of the plugin.
+     *
+     * Set the plugin name and the plugin version that can be used throughout the plugin.
+     * Load the dependencies, define the locale, and set the hooks for the admin area and
+     * the public-facing side of the site.
+     *
+     * @since    1.0.0
+     */
+    public function __construct()
+    {
+        if (defined('BMLT_EXPORT_VERSION')) {
+            $this->version = BMLT_EXPORT_VERSION;
+        } else {
+            $this->version = '1.0.0';
+        }
+        $this->bmlt_export = 'bmlt-export';
 
-		$this->load_dependencies();
-		$this->set_locale();
-		$this->define_admin_hooks();
-		$this->define_public_hooks();
-        $this->define_admin_filters();
+        $this->loadDependencies();
+        $this->setLocale();
+        $this->defineAdminHooks();
+        $this->definePublicHooks();
+        $this->defineAdminFilters();
+    }
 
-	}
+    /**
+     * Load the required dependencies for this plugin.
+     *
+     * Include the following files that make up the plugin:
+     *
+     * - BmltExportLoader. Orchestrates the hooks of the plugin.
+     * - BmltExportI18n. Defines internationalization functionality.
+     * - BmltExportAdmin. Defines all hooks for the admin area.
+     * - BmltExportPublic. Defines all hooks for the public side of the site.
+     *
+     * Create an instance of the loader which will be used to register the hooks
+     * with WordPress.
+     *
+     * @since    1.0.0
+     * @access   private
+     */
+    private function loadDependencies()
+    {
 
-	/**
-	 * Load the required dependencies for this plugin.
-	 *
-	 * Include the following files that make up the plugin:
-	 *
-	 * - Bmlt_Export_Loader. Orchestrates the hooks of the plugin.
-	 * - Bmlt_Export_i18n. Defines internationalization functionality.
-	 * - Bmlt_Export_Admin. Defines all hooks for the admin area.
-	 * - Bmlt_Export_Public. Defines all hooks for the public side of the site.
-	 *
-	 * Create an instance of the loader which will be used to register the hooks
-	 * with WordPress.
-	 *
-	 * @since    1.0.0
-	 * @access   private
-	 */
-	private function load_dependencies() {
+        /**
+         * The class responsible for orchestrating the actions and filters of the
+         * core plugin.
+         */
+        require_once plugin_dir_path(dirname(__FILE__)) . 'includes/class-bmlt-export-loader.php';
 
-		/**
-		 * The class responsible for orchestrating the actions and filters of the
-		 * core plugin.
-		 */
-		require_once plugin_dir_path( dirname( __FILE__ ) ) . 'includes/class-bmlt-export-loader.php';
+        /**
+         * The class responsible for defining internationalization functionality
+         * of the plugin.
+         */
+        require_once plugin_dir_path(dirname(__FILE__)) . 'includes/class-bmlt-export-i18n.php';
 
-		/**
-		 * The class responsible for defining internationalization functionality
-		 * of the plugin.
-		 */
-		require_once plugin_dir_path( dirname( __FILE__ ) ) . 'includes/class-bmlt-export-i18n.php';
+        /**
+         * The class responsible for defining all actions that occur in the admin area.
+         */
+        require_once plugin_dir_path(dirname(__FILE__)) . 'admin/class-bmlt-export-admin.php';
 
-		/**
-		 * The class responsible for defining all actions that occur in the admin area.
-		 */
-		require_once plugin_dir_path( dirname( __FILE__ ) ) . 'admin/class-bmlt-export-admin.php';
+        /**
+         * The class responsible for defining all actions that occur in the public-facing
+         * side of the site.
+         */
+        require_once plugin_dir_path(dirname(__FILE__)) . 'public/class-bmlt-export-public.php';
 
-		/**
-		 * The class responsible for defining all actions that occur in the public-facing
-		 * side of the site.
-		 */
-		require_once plugin_dir_path( dirname( __FILE__ ) ) . 'public/class-bmlt-export-public.php';
+        $this->loader = new BmltExportLoader();
+    }
 
-		$this->loader = new Bmlt_Export_Loader();
+    /**
+     * Define the locale for this plugin for internationalization.
+     *
+     * Uses the BmltExportI18n class in order to set the domain and to register the hook
+     * with WordPress.
+     *
+     * @since    1.0.0
+     * @access   private
+     */
+    private function setLocale()
+    {
 
-	}
+        $plugin_i18n = new BmltExportI18n();
 
-	/**
-	 * Define the locale for this plugin for internationalization.
-	 *
-	 * Uses the Bmlt_Export_i18n class in order to set the domain and to register the hook
-	 * with WordPress.
-	 *
-	 * @since    1.0.0
-	 * @access   private
-	 */
-	private function set_locale() {
+        $this->loader->addAction('plugins_loaded', $plugin_i18n, 'loadPluginTextdomain');
+    }
 
-		$plugin_i18n = new Bmlt_Export_i18n();
+    /**
+     * Register all of the hooks related to the admin area functionality
+     * of the plugin.
+     *
+     * @since    1.0.0
+     * @access   private
+     */
+    private function defineAdminHooks()
+    {
 
-		$this->loader->add_action( 'plugins_loaded', $plugin_i18n, 'load_plugin_textdomain' );
-
-	}
-
-	/**
-	 * Register all of the hooks related to the admin area functionality
-	 * of the plugin.
-	 *
-	 * @since    1.0.0
-	 * @access   private
-	 */
-	private function define_admin_hooks() {
-
-		$plugin_admin = new Bmlt_Export_Admin( $this->get_bmlt_export(), $this->get_version() );
-        $this->loader->add_action('admin_menu', $plugin_admin, 'admin_menu_link');
-        $this->loader->add_action('admin_init', $plugin_admin, 'register_setting');
-		$this->loader->add_action( 'admin_enqueue_scripts', $plugin_admin, 'enqueue_styles' );
-		$this->loader->add_action( 'admin_enqueue_scripts', $plugin_admin, 'enqueue_scripts' );
-        $this->loader->add_action("admin_notices", $plugin_admin, "is_root_server_missing");
-        $this->loader->add_action('bmlt_send_export', $plugin_admin, 'handle_cron_bmlt' );
-
-	}
+        $plugin_admin = new BmltExportAdmin($this->getBmltExport(), $this->getVersion());
+        $this->loader->addAction('admin_menu', $plugin_admin, 'adminMenuLink');
+        $this->loader->addAction('admin_init', $plugin_admin, 'register_setting');
+        $this->loader->addAction('admin_enqueueScripts', $plugin_admin, 'enqueueStyles');
+        $this->loader->addAction('admin_enqueueScripts', $plugin_admin, 'enqueueScripts');
+        $this->loader->addAction("admin_notices", $plugin_admin, "isRootServerMissing");
+        $this->loader->addAction('bmlt_send_export', $plugin_admin, 'handleCronBmlt');
+    }
 
     /**
      * Register all of the filters related to the admin area functionality
@@ -170,67 +173,71 @@ class Bmlt_Export {
      * @since    1.0.0
      * @access   private
      */
-    private function define_admin_filters() {
-        $plugin_admin = new Bmlt_Export_Admin( $this->get_bmlt_export(), $this->get_version() );
-        $this->loader->add_filter( 'cron_schedules', $plugin_admin, 'schedule_cron_bmlt' );
-        // $this->loader->add_filter('plugin_action_links_' . plugin_basename(__FILE__), $plugin_admin,'filter_plugin_actions',10,2);
-
+    private function defineAdminFilters()
+    {
+        $plugin_admin = new BmltExportAdmin($this->getBmltExport(), $this->getVersion());
+        $this->loader->addFilter('cron_schedules', $plugin_admin, 'scheduleCronBmlt');
+        // $this->loader->addFilter('plugin_action_links_' . plugin_basename(__FILE__), $plugin_admin,'filter_plugin_actions',10,2);
     }
 
-	/**
-	 * Register all of the hooks related to the public-facing functionality
-	 * of the plugin.
-	 *
-	 * @since    1.0.0
-	 * @access   private
-	 */
-	private function define_public_hooks() {
+    /**
+     * Register all of the hooks related to the public-facing functionality
+     * of the plugin.
+     *
+     * @since    1.0.0
+     * @access   private
+     */
+    private function definePublicHooks()
+    {
 
-		$plugin_public = new Bmlt_Export_Public( $this->get_bmlt_export(), $this->get_version() );
+        $plugin_public = new BmltExportPublic($this->getBmltExport(), $this->getVersion());
 
-		$this->loader->add_action( 'wp_enqueue_scripts', $plugin_public, 'enqueue_styles' );
-		$this->loader->add_action( 'wp_enqueue_scripts', $plugin_public, 'enqueue_scripts' );
-        $this->loader->add_shortcode("bmlt_export", $plugin_public, "bmlt_export_shortcode", 10, 2);
-	}
+        $this->loader->addAction('wp_enqueueScripts', $plugin_public, 'enqueueStyles');
+        $this->loader->addAction('wp_enqueueScripts', $plugin_public, 'enqueueScripts');
+        $this->loader->addShortcode("bmlt_export", $plugin_public, "bmltExportShortcode", 10, 2);
+    }
 
-	/**
-	 * Run the loader to execute all of the hooks with WordPress.
-	 *
-	 * @since    1.0.0
-	 */
-	public function run() {
-		$this->loader->run();
-	}
+    /**
+     * Run the loader to execute all of the hooks with WordPress.
+     *
+     * @since    1.0.0
+     */
+    public function run()
+    {
+        $this->loader->run();
+    }
 
-	/**
-	 * The name of the plugin used to uniquely identify it within the context of
-	 * WordPress and to define internationalization functionality.
-	 *
-	 * @since     1.0.0
-	 * @return    string    The name of the plugin.
-	 */
-	public function get_bmlt_export() {
-		return $this->bmlt_export;
-	}
+    /**
+     * The name of the plugin used to uniquely identify it within the context of
+     * WordPress and to define internationalization functionality.
+     *
+     * @since     1.0.0
+     * @return    string    The name of the plugin.
+     */
+    public function getBmltExport()
+    {
+        return $this->bmlt_export;
+    }
 
-	/**
-	 * The reference to the class that orchestrates the hooks with the plugin.
-	 *
-	 * @since     1.0.0
-	 * @return    Bmlt_Export_Loader    Orchestrates the hooks of the plugin.
-	 */
-	public function get_loader() {
-		return $this->loader;
-	}
+    /**
+     * The reference to the class that orchestrates the hooks with the plugin.
+     *
+     * @since     1.0.0
+     * @return    BmltExportLoader    Orchestrates the hooks of the plugin.
+     */
+    public function getLoader()
+    {
+        return $this->loader;
+    }
 
-	/**
-	 * Retrieve the version number of the plugin.
-	 *
-	 * @since     1.0.0
-	 * @return    string    The version number of the plugin.
-	 */
-	public function get_version() {
-		return $this->version;
-	}
-
+    /**
+     * Retrieve the version number of the plugin.
+     *
+     * @since     1.0.0
+     * @return    string    The version number of the plugin.
+     */
+    public function getVersion()
+    {
+        return $this->version;
+    }
 }

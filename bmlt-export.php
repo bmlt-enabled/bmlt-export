@@ -4,7 +4,7 @@
  *
  * @link              https://github.com/bmlt-enabled/bmlt-export
  * @since             1.0.0
- * @package           Bmlt_Export
+ * @package           BmltExport
  *
  * @wordpress-plugin
  * Plugin Name:       BMLT Export
@@ -20,8 +20,8 @@
  */
 
 // If this file is called directly, abort.
-if ( ! defined( 'WPINC' ) ) {
-	die;
+if (! defined('WPINC')) {
+    die;
 }
 
 /**
@@ -43,22 +43,24 @@ if (!defined('BMLT_EXPORT_NAME')) {
  * The code that runs during plugin activation.
  * This action is documented in includes/class-bmlt-export-activator.php
  */
-function activate_bmlt_export() {
-	require_once BMLT_EXPORT_PATH . 'includes/class-bmlt-export-activator.php';
-	Bmlt_Export_Activator::activate();
+function activateBmltExport()
+{
+    require_once BMLT_EXPORT_PATH . 'includes/class-bmlt-export-activator.php';
+    BmltExportActivator::activate();
 }
 
 /**
  * The code that runs during plugin deactivation.
  * This action is documented in includes/class-bmlt-export-deactivator.php
  */
-function deactivate_bmlt_export() {
-	require_once BMLT_EXPORT_PATH . 'includes/class-bmlt-export-deactivator.php';
-	Bmlt_Export_Deactivator::deactivate();
+function deactivateBmltExport()
+{
+    require_once BMLT_EXPORT_PATH . 'includes/class-bmlt-export-deactivator.php';
+    BmltExportDeactivator::deactivate();
 }
 
-register_activation_hook( __FILE__, 'activate_bmlt_export' );
-register_deactivation_hook( __FILE__, 'deactivate_bmlt_export' );
+register_activation_hook(__FILE__, 'activateBmltExport');
+register_deactivation_hook(__FILE__, 'deactivateBmltExport');
 
 /**
  * The core plugin class that is used to define internationalization,
@@ -75,10 +77,10 @@ require BMLT_EXPORT_PATH . 'includes/class-bmlt-export.php';
  *
  * @since    1.0.0
  */
-function run_bmlt_export() {
+function runBmltExport()
+{
 
-	$plugin = new Bmlt_Export();
-	$plugin->run();
-
+    $plugin = new BmltExport();
+    $plugin->run();
 }
-run_bmlt_export();
+runBmltExport();

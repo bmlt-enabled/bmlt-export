@@ -22,23 +22,23 @@
  * @link       https://github.com/bmlt-enabled/bmlt-export
  * @since      1.0.0
  *
- * @package    Bmlt_Export
+ * @package    BmltExport
  */
 
 // If uninstall not called from WordPress, then exit.
-if ( ! defined( 'WP_UNINSTALL_PLUGIN' ) ) {
-	exit;
+if (! defined('WP_UNINSTALL_PLUGIN')) {
+    exit;
 }
 
 // delete plugin transient
-delete_transient('bmlt_export_file_dir_check');
+delete_transient('bmlt_export_fileDirCheck');
 
 // delete cron event
 $timestamp = wp_next_scheduled('bmlt_send_export');
 wp_unschedule_event($timestamp, 'bmlt_send_export');
 
 // remove schedule
-remove_filter('cron_schedules', 'schedule_cron_bmlt');
+remove_filter('cron_schedules', 'scheduleCronBmlt');
 
 /**
  * Removes Upload Folder
