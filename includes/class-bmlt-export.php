@@ -160,8 +160,8 @@ class BmltExport
         $plugin_admin = new BmltExportAdmin($this->getBmltExport(), $this->getVersion());
         $this->loader->addAction('admin_menu', $plugin_admin, 'adminMenuLink');
         $this->loader->addAction('admin_init', $plugin_admin, 'register_setting');
-        $this->loader->addAction('admin_enqueueScripts', $plugin_admin, 'enqueueStyles');
-        $this->loader->addAction('admin_enqueueScripts', $plugin_admin, 'enqueueScripts');
+        $this->loader->addAction('admin_enqueue_scripts', $plugin_admin, 'enqueueStyles');
+        $this->loader->addAction('admin_enqueue_scripts', $plugin_admin, 'enqueueScripts');
         $this->loader->addAction("admin_notices", $plugin_admin, "isRootServerMissing");
         $this->loader->addAction('bmlt_send_export', $plugin_admin, 'handleCronBmlt');
     }
