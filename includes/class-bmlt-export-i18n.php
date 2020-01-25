@@ -37,7 +37,7 @@ class BmltExportI18n
     public function loadPluginTextdomain()
     {
 
-        loadPluginTextdomain(
+        load_plugin_textdomain(
             'bmlt-export',
             false,
             dirname(dirname(plugin_basename(__FILE__))) . '/languages/'

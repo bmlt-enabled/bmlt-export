@@ -43,8 +43,6 @@ class BmltExportAdmin
      */
     private $version;
 
-    private $plugin_screen_hook_suffix;
-
     public $optionsName = 'bmlt_export_options';
     public $options = array();
     const HTTP_RETRIEVE_ARGS = array(
@@ -321,7 +319,7 @@ class BmltExportAdmin
             echo "<p><a href='$url'>BMLT Export Settings</a></p>";
             echo '</div>';
         }
-        addAction("admin_notices", array(
+        add_action("admin_notices", array(
             &$this,
             "clear_admin_message"
         ));
@@ -391,7 +389,7 @@ class BmltExportAdmin
             &$this,
             'adminOptionsPage'
         ));
-        addFilter('plugin_action_links_' . plugin_basename(__FILE__), array(
+        add_filter('plugin_action_links_' . plugin_basename(__FILE__), array(
             &$this,
             'filter_plugin_actions'
         ), 10, 2);
