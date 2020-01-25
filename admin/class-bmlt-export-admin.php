@@ -145,8 +145,6 @@ class BmltExportAdmin
      */
     public function handleCronBmlt()
     {
-        error_log("We have handled the cron" . time());
-
         // Checks to see if upload directory exists, if not we create it.
         $this->fileDirCheck();
 
@@ -181,7 +179,6 @@ class BmltExportAdmin
         // Remove temp NAWS Export file
         $wp_filesystem->delete($exportFile);
         remove_filter('wp_mail_content_type', 'bmlt_email_content_type_html');
-        error_log("Happy");
         exit;
     }
 
