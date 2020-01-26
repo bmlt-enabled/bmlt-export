@@ -312,7 +312,7 @@ class BmltExportAdmin
         $root_server = $this->options['root_server'];
         if ($root_server == '') {
             echo '<div id="message" class="error"><p>Missing BMLT Root Server in settings for BMLT Export.</p>';
-            $url = admin_url('options-general.php?page=class-bmlt-export.php');
+            $url = admin_url('options-general.php?page=class-bmlt-export-admin.php');
             echo "<p><a href='$url'>BMLT Export Settings</a></p>";
             echo '</div>';
         }
