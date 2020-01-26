@@ -46,18 +46,7 @@ if ($_POST['bmlt_export_save']) {
             <ul>
                 <li>
                     <label for="root_server">Default Root Server: </label>
-                    <select style="display:inline;" id="root_server" name="root_server" class="bmlt_export_root_servers_select">
-                        <?php
-                        $rootServerList = $this->getRootServers();
-                        foreach ($rootServerList as $rootServer) { ?>
-                            <?php $rootServerURL = rtrim($rootServer['rootURL'], "/"); ?>
-                            <?php if ($rootServerURL == rtrim($this->options['root_server'], "/")) { ?>
-                                <option selected="selected" value="<?php echo $rootServerURL; ?>"><?php echo $rootServer['name'] . " (" . $rootServerURL . ")"; ?></option>
-                            <?php } else { ?>
-                                <option value="<?php echo $rootServerURL; ?>"><?php echo $rootServer['name'] . " (" . $rootServerURL . ")"; ?></option>
-                            <?php } ?>
-                        <?php } ?>
-                    </select>
+                    <input id="root_server" type="text" size="50" name="root_server" value="<?php echo $this->options['root_server']; ?>" /> <?php echo $connect; ?>
                 </li>
             </ul>
         </div>
