@@ -145,41 +145,45 @@ class BmltExportAdmin
      */
     public function handleCronBmlt()
     {
-        // Checks to see if upload directory exists, if not we create it.
-        $this->fileDirCheck();
+        if ((isset($this->options['root_server']) && $this->options['root_server'] != '') && (isset($serviceBodyId) && $serviceBodyId != '')) {
+            // Checks to see if upload directory exists, if not we create it.
+            $this->fileDirCheck();
 
-        $serviceBodyData = explode(',', $this->options['service_body_dropdown']);
-        $serviceBodyId = $serviceBodyData[1];
+            $serviceBodyData = explode(',', $this->options['service_body_dropdown']);
+            $serviceBodyId = $serviceBodyData[1];
 
-        // Get NAWS Export
-        $nawsExportURL = $this->options['root_server'] . "/client_interface/csv/?switcher=GetNAWSDump&sb_id=" . $serviceBodyId;
-        $nawsExport = $this->get($nawsExportURL);
-        $httpcode = wp_remote_retrieve_response_code($nawsExport);
-        $response_message = wp_remote_retrieve_response_message($nawsExport);
-        if ($httpcode != 200 && $httpcode != 302 && $httpcode != 304 && !empty($response_message)) {
-            error_log("Could not retrieve NAWS Export");
+            // Get NAWS Export
+            $nawsExportURL = $this->options['root_server'] . "/client_interface/csv/?switcher=GetNAWSDump&sb_id=" . $serviceBodyId;
+            $nawsExport = $this->get($nawsExportURL);
+            $httpcode = wp_remote_retrieve_response_code($nawsExport);
+            $response_message = wp_remote_retrieve_response_message($nawsExport);
+            if ($httpcode != 200 && $httpcode != 302 && $httpcode != 304 && !empty($response_message)) {
+                error_log("Could not retrieve NAWS Export");
+            }
+            $nawsExportBody = wp_remote_retrieve_body($nawsExport);
+
+            // Get export filename
+            $content = wp_remote_retrieve_header($nawsExport, 'Content-Disposition');
+            $tmp_name = explode('=', $content);
+            $realfilename = trim($tmp_name[1], '";\'');
+            $exportFile = ABSPATH . "wp-content/uploads/bmlt-export/" . $realfilename;
+
+            global $wp_filesystem;
+            WP_Filesystem();
+            // Save NAWS Export to temp location.
+            $wp_filesystem->put_contents($exportFile, $nawsExportBody, FS_CHMOD_FILE);
+            $mail_attachment = array(WP_CONTENT_DIR . '/uploads/bmlt-export/' . $realfilename);
+
+            // Send mail
+            $this->bmltMail($mail_attachment);
+
+            // Remove temp NAWS Export file
+            $wp_filesystem->delete($exportFile);
+            remove_filter('wp_mail_content_type', 'bmlt_email_content_type_html');
+            exit;
+        } else {
+            error_log("Could not send NAWS Export, Service body or root server not set");
         }
-        $nawsExportBody = wp_remote_retrieve_body($nawsExport);
-
-        // Get export filename
-        $content = wp_remote_retrieve_header($nawsExport, 'Content-Disposition');
-        $tmp_name = explode('=', $content);
-        $realfilename = trim($tmp_name[1], '";\'');
-        $exportFile = ABSPATH . "wp-content/uploads/bmlt-export/" . $realfilename;
-
-        global $wp_filesystem;
-        WP_Filesystem();
-        // Save NAWS Export to temp location.
-        $wp_filesystem->put_contents($exportFile, $nawsExportBody, FS_CHMOD_FILE);
-        $mail_attachment = array(WP_CONTENT_DIR . '/uploads/bmlt-export/' . $realfilename);
-
-        // Send mail
-        $this->bmltMail($mail_attachment);
-
-        // Remove temp NAWS Export file
-        $wp_filesystem->delete($exportFile);
-        remove_filter('wp_mail_content_type', 'bmlt_email_content_type_html');
-        exit;
     }
 
     public function adminOptionsPage()
