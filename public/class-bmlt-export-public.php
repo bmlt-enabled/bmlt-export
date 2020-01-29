@@ -107,12 +107,15 @@ class BmltExportPublic
     {
 
         $atts = array_change_key_case((array)$atts, CASE_LOWER);
-        extract(shortcode_atts(array(
-            "last" => '0',
-            "next" => '0'
-        ), $atts));
-        $last = sanitize_text_field($last);
-        $next = sanitize_text_field($next);
+        $args = shortcode_atts(
+            array(
+                "last" => '0',
+                "next" => '0'
+            ),
+            $atts
+        );
+        $last = sanitize_text_field($args['last']);
+        $next = sanitize_text_field($args['next']);
         $nextRun = wp_next_scheduled('bmlt_send_export');
 
         if ($last && !$next) {
