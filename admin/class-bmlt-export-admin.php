@@ -373,8 +373,8 @@ class BmltExportAdmin
         $result = json_decode(wp_remote_retrieve_body($results), true);
         array_push($result, [
             'id'      => '999',
-            'name'    => 'Tomato &#127813;',
-            'rootURL' => 'https://tomato.bmltenabled.org/main_server'
+            'name'    => 'Aggregator &#127813;',
+            'rootURL' => 'https://aggregator.bmltenabled.org/main_server'
         ]);
         usort($result, function ($a, $b) {
             return strnatcasecmp($a['name'], $b['name']);
